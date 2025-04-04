@@ -1,0 +1,20 @@
+{
+  "name": "userscript-extend-webpage",
+  "binName": "uewp",
+  "version": "1.0.0",
+  "description": "Web extension development tool based on UserScript.",
+  "main": "index.js",
+  "bin": {
+    "uewp": "index.js"
+  },
+  "author": "Timeic",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "chokidar": "^4.0.3",
+    "commander": "^11.1.0",
+    "fs-extra": "^11.2.0",
+    "html-minifier": "^4.0.0",
+    "prettier": "^3.4.2"
+  }
+}
