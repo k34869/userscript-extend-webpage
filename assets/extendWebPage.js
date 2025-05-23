@@ -1,5 +1,5 @@
 ;(function () {
-    function urlMatch(pattern, url) {
+    function urlMatch(pattern, url = location.href) {
         pattern = pattern.replace(/\*/g, '.*?');
         pattern = '^' + pattern + '$';
         const regex = new RegExp(pattern);
@@ -42,15 +42,18 @@
     function getDOM(selector = 'body', timeout = 3000) {
         return new Promise((resolve, reject) => {
             try {
-                const timer = setInterval(() => {
+                let timeBrack, timer;
+                timer = setInterval(() => {
                     const el = $(selector);
                     if (el.length > 0) {
                         clearInterval(timer);
+                        clearTimeout(timeBrack);
                         resolve(el);
                     }
                 }, 50);
-                setTimeout(() => {
+                timeBrack = setTimeout(() => {
                     clearInterval(timer);
+                    clearTimeout(timeBrack);
                     reject(`'${selector}' DOM find not found`);
                 }, timeout);
             } catch (err) {
