@@ -1,7 +1,7 @@
 {
   "name": "userscript-extend-webpage",
   "binName": "uewp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Web extension development tool based on UserScript.",
   "main": "index.js",
   "bin": {
@@ -10,11 +10,15 @@
   "author": "Timeic",
   "license": "MIT",
   "dependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
     "cheerio": "^1.0.0",
     "chokidar": "^4.0.3",
     "commander": "^11.1.0",
     "fs-extra": "^11.2.0",
     "html-minifier": "^4.0.0",
-    "prettier": "^3.4.2"
+    "prettier": "^3.4.2",
+    "rollup": "^4.42.0",
+    "rollup-plugin-postcss": "^4.0.2"
   }
 }

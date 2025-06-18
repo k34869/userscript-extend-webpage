@@ -59,15 +59,18 @@ initialization.createProject = function (name = '.') {
         mkdirsSync(`${name}/routes`);
         mkdirsSync(`${name}/assets`);
         const userscript = {
+            runAt: 'document-start'
+        };
+        const package = {
             name: name === '.' ? path.basename(process.cwd()) : name,
             version: "1.0.0",
             description: "",
             author: "",
             license: "MIT"
-        };
+        }
         fs.writeFileSync(`${name}/userscript.json`, JSON.stringify(userscript, null, 4), 'utf8');
+        fs.writeFileSync(`${name}/package.json`, JSON.stringify(package, null, 4), 'utf8');
         fs.writeFileSync(`${name}/routes/Test.html`, `<script routes="[ '*://www.test.com/*' ]">\n` + '    ({\n' + '        public: {\n' + "            message: 'This is Test UserScript-extendWebPage🚀'\n" + '        },\n' + '        loadExec() {\n' + '            document.write(this.message);\n' + '        }\n' + '    })\n' + '</script>', 'utf8');
-        fs.writeFileSync(`${name}/index.js`, '', 'utf8');
         return { stat: true, msg: 'successful' };
     } catch (err) {
         return { stat: false, msg: err.message };
@@ -75,11 +78,19 @@ initialization.createProject = function (name = '.') {
 }
 
 function getProjectConfig() {
-    if (!fs.existsSync(`./userscript.json`)) {
-        error('please build in the directory containing the userscript.json file');
+    if (!fs.existsSync(`./userscript.json`) || !fs.existsSync(`./package.json`)) {
+        error("please build in the directory containing the 'userscript.json' and 'package.json' file");
     } else {
-        const data = fs.readFileSync('./userscript.json', 'utf8');
-        const configs = JSON.parse(data);
+        const data = JSON.parse(fs.readFileSync('./userscript.json', 'utf8'));
+        const data2 = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+        const configs = {
+            name: data2.name,
+            author: data2.author,
+            version: data2.version,
+            description: data2.description,
+            license: data2.license,
+            ...data
+        }
         const { name = '', version = '', description = '', author = '', require = [], exclude = [], grant = [], license = '', runAt = '' } = configs;
         if (typeof name !== 'string') {
             error(`userscript.json config item 'name' must be of type string`);
@@ -105,37 +116,39 @@ function getProjectConfig() {
     }
 }
 
-class Routes {
-    constructor() {
-        const items = fs.readdirSync(`${path.join('./', 'routes')}`);
-        items.forEach(e => {
-            const { ext } = path.parse(e);
-            const itemPath = path.join('./', 'routes', e);
-            const routeName = e.replace(ext, '');
-            if (fs.statSync(itemPath).isFile() && ext === '.html') {
-                gRouteExecCode(routeName, {
-                    routesPattern: this.routesPattern,
-                    routesName: this.routesName,
-                    routesExecutorCode: this.routesExecutorCode,
-                    resFilesMap: this.resFilesMap
-                });
-            }
-        })
-        this.routesPattern = new Set(this.routesPattern);
+async function createRoutes() {
+    const r = {
+        routesName: [],
+        routesPattern: [],
+        resFilesMap: [],
+        routesExecutorCode: [],
+        async getTargetCode() {
+            return prettier.format(`;(function () { ${r.routesExecutorCode.join('\n')}window.extendApp = extendWebPage([${r.routesName.join(',')}]); })();`, { parser: 'babel', tabWidth: 4 });
+        }
     }
-    routesName = [];
-    routesPattern = [];
-    resFilesMap = [];
-    routesExecutorCode = [];
-    getTargetCode() {
-        return prettier.format(`;(function () { ${fs.readFileSync('./index.js', 'utf8')}\n${this.routesExecutorCode.join('\n')}window.extendApp = extendWebPage([${this.routesName.join(',')}]); })();`, { parser: 'babel', tabWidth: 4 });
+
+    const items = fs.readdirSync(`${path.join('./', 'routes')}`);
+    for (const e of items) {
+        const { ext } = path.parse(e);
+        const itemPath = path.join('./', 'routes', e);
+        const routeName = e.replace(ext, '');
+        if (fs.statSync(itemPath).isFile() && ext === '.html') {
+            await gRouteExecCode(routeName, {
+                routesPattern: r.routesPattern,
+                routesName: r.routesName,
+                routesExecutorCode: r.routesExecutorCode,
+                resFilesMap: r.resFilesMap
+            });
+        }
     }
+    r.routesPattern = new Set(r.routesPattern);
+    return r;
 }
 
-function buildProject({ mode, configs }, callback) {
+async function buildProject({ mode, configs }, callback) {
     let userscriptHeader = gUserScriptHeader(configs);
     const extendWebPageCode = fs.readFileSync(`${__dirname}/assets/extendWebPage.min.js`, 'utf8');
-    const r = new Routes();
+    const r = await createRoutes();
     r.routesPattern.forEach((e) => {
         userscriptHeader = userscriptHeader.replace('// ==/UserScript==', `// @match        ${e}\n// ==/UserScript==`);
     })

@@ -18,18 +18,6 @@
         URL.revokeObjectURL(url);
     }
 
-    function notification(...args) {
-        if (Notification.permission === 'granted') {
-            const notification = new Notification(...args);
-            notification.onclick = () => {
-                window.focus();
-            };
-            return notification;
-        } else {
-            Notification.requestPermission();
-        }
-    }
-
     function setClipboardText(text) {
         const input = document.createElement('input');
         input.value = text;
@@ -116,7 +104,6 @@
     jQuery.urlMatch = urlMatch;
     jQuery.saveTextToFile = saveTextToFile;
     jQuery.setClipboardText = setClipboardText;
-    jQuery.notification = notification;
     jQuery.getDOM = getDOM;
 
     window.extendWebPage = extendWebPage;
