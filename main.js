@@ -122,7 +122,6 @@ program
 program
   .command('init [name]')
   .description('Initialize uewp project.')
-  .option('--open [open]', 'open project.')
   .action(initConsole);
 
 program
