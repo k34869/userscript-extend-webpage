@@ -4,18 +4,5 @@
 // @description	examples project
 // @author	
 // @license	MIT
+// @require	file:///C:\Users\k34869\projects\userscript-extend-webpage\examples\uewp-project\dist\uewp-project.dev.js
 // ==/UserScript==
-
-(function () {
-  'use strict';
-
-  // import css from './assets/logo.svg?raw'
-  console.log(css);
-  // export async function add() {
-  //   const d = await import('./assets/1.png')
-  //   console.log(d);
-    
-  // }
-  // add()
-
-})();

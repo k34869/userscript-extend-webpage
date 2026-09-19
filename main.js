@@ -9,17 +9,38 @@ import ora from 'ora';
 import chalk from 'chalk'
 import ignore from 'ignore';
 
-const productionBuild = () => {
+let prevName
+
+const buildConsole = async (mode) => {
   const start = process.hrtime()
   const spinner = ora('building').start()
   spinner.start()
-  build().then(() => {
+  return build(mode).then(({ name }) => {
     const [sec, nanosec] = process.hrtime(start);
     const ms = sec * 1000 + nanosec / 1e6
     spinner.stop()
-    console.log('\n', chalk.blue.bold(`src/main.js -> dist/${packages.name}.user.js`, '\n', chalk.green.bold(`Took ${parseInt(ms)}ms`)));
+    if (mode === 'development') {
+      console.log('\n', chalk.blue.bold(`src/main.js -> dist/${name}.user.js @require dist/${name}.dev.js`, '\n', chalk.green.bold(`Took ${parseInt(ms)}ms`)));
+    } else {
+      console.log('\n', chalk.blue.bold(`src/main.js -> dist/${name}.user.js`, '\n', chalk.green.bold(`Took ${parseInt(ms)}ms`)));
+    }
+    return name
   }).catch(error => {
     throw error
+  })
+}
+
+const watcherBuildConsole = (path, state) => {
+  const start = process.hrtime()
+  console.log(chalk.yellow(` ${new Date} '${path}' is ${state === undefined ? 'delete' : 'change'}, building...`));
+  build('development').then(({ name }) => {
+    if (prevName !== name) {
+      console.log('', chalk.blue.bold(`src/main.js -> dist/${name}.user.js @require dist/${name}.dev.js`));
+    }
+    prevName = name
+    const [sec, nanosec] = process.hrtime(start);
+    const ms = sec * 1000 + nanosec / 1e6
+    console.log(chalk.green.bold(` Took ${parseInt(ms)}ms`));
   })
 }
 
@@ -36,7 +57,7 @@ program
   .name(packages.binName)
   .version(packages.version)
   .description(packages.description)
-  .action(productionBuild);
+  .action(buildConsole);
 
 program
   .command("init [name]")
@@ -51,37 +72,33 @@ program
   .description("Build for development mode.")
   .option("-w, --watch", "Rebuilds when modules have changed on disk.")
   .action((opts) => {
-    console.log('\n', chalk.blue.bold(`src/main.js -> dist/${packages.name}.user.js @require dist/${packages.name}.dev.js`));
-    if (opts.watch) {
-      const ig = ignore();
-      const gitignoreContent = fs.readFileSync(path.resolve('.gitignore'), 'utf8')
-      ig.add(gitignoreContent)
+    buildConsole('development').then((fristName) => {
+      prevName = fristName
+      if (opts.watch) {
+        const ig = ignore();
+        const gitignoreContent = fs.readFileSync(path.resolve('.gitignore'), 'utf8')
+        ig.add(gitignoreContent)
 
-      const isIgnored = (filePath) => {
-        const relativePath = path.relative(process.cwd(), filePath);
-        return relativePath === '' ? false : ig.ignores(relativePath);
-      };
+        const isIgnored = (filePath) => {
+          const relativePath = path.relative(process.cwd(), filePath);
+          return relativePath === '' ? false : ig.ignores(relativePath);
+        };
 
-      const watcher = chokidar.watch("./", {
-        ignored: isIgnored,
-        ignoreInitial: true,
-        persistent: true
-      });
-      watcher.on("change", (path) => {
-        console.log(path);
-      });
-      watcher.on("unlink", (path) => {
-        console.log(path);
-      });
-    } else {
-
-    }
+        const watcher = chokidar.watch("./", {
+          ignored: isIgnored,
+          ignoreInitial: true,
+          persistent: true
+        });
+        watcher.on("change", watcherBuildConsole);
+        watcher.on("unlink", watcherBuildConsole);
+      }
+    })
   });
 
 program
   .command("build")
   .description("Build for production mode.")
-  .action(productionBuild);
+  .action(buildConsole);
 
 program
   .command("docs")
