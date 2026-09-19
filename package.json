@@ -15,6 +15,7 @@
   },
   "scripts": {
     "build": "uewp",
-    "dev": "uewp dev -w"
+    "dev": "uewp dev -w",
+    "docs": "uewp docs"
   }
 }
