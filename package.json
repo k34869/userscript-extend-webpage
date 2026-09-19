@@ -22,9 +22,12 @@
     "start": "nub main.js"
   },
   "dependencies": {
+    "chalk": "^6.0.0",
     "chokidar": "^4.0.3",
     "commander": "^11.1.0",
     "fs-extra": "^11.2.0",
+    "ignore": "^7.0.9",
+    "ora": "^9.4.1",
     "rollup": "^4.42.0"
   },
   "devDependencies": {
