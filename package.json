@@ -26,5 +26,13 @@
     "commander": "^11.1.0",
     "fs-extra": "^11.2.0",
     "rollup": "^4.42.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-image": "^3.0.3",
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.5.28",
+    "postcss-url": "^10.1.4",
+    "rollup-plugin-import-raw": "^1.0.2",
+    "rollup-plugin-postcss": "^4.0.2"
   }
 }
