@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import packages from './package.json' with { type: 'json' };
 import fs from 'fs-extra';
 import path from 'path';
