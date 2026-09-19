@@ -1,3 +1,3 @@
-import { moduleBundler } from "../lib/core.js";
+import { moduleBundler } from '../lib/core.js';
 
-moduleBundler()
+moduleBundler();

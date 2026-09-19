@@ -2,14 +2,45 @@ import packages from './package.json' with { type: 'json' };
 import fs from 'fs-extra';
 import path from 'path';
 import { program } from 'commander';
-import { exec } from 'child_process';
-import { build } from './lib/core.js';
+import { execAsync } from './lib/execAsync.js';
+import { build, createProject } from './lib/core.js';
+import { isUrlFriendly } from './lib/utils.js';
 import chokidar from 'chokidar';
 import ora from 'ora';
 import chalk from 'chalk';
 import ignore from 'ignore';
 
 let prevName;
+
+const initConsole = name => {
+  const spinner = ora('initialize').start();
+  spinner.start();
+  const projectName = name ?? path.basename(process.cwd());
+  if (isUrlFriendly(projectName)) {
+    createProject(name)
+      .then(() => {
+        spinner.stop();
+        console.log(
+          '\n',
+          chalk.green.bold(
+            'initialization successful.',
+            '\n',
+            name
+              ? `project for '${projectName}' directory.`
+              : 'project for current directory.',
+          ),
+        );
+      })
+      .catch(error => {
+        console.log(error.stderr);
+        throw error;
+      });
+  } else {
+    throw new Error(
+      `Sorry, name can only contain URL-friendly characters and name can no longer contain special characters ("~'!()*").`,
+    );
+  }
+};
 
 const buildConsole = async mode => {
   const start = process.hrtime();
@@ -70,17 +101,16 @@ const watcherBuildConsole = (path, state) => {
 };
 
 const openDocs = () => {
-  exec(
+  execAsync(
     (process.platform === 'win32'
       ? 'start'
       : process.platform === 'darwin'
         ? 'open'
         : 'xdg-open') +
       ' https://www.tampermonkey.net/documentation.php?locale=zh',
-    error => {
-      throw error;
-    },
-  );
+  ).catch(error => {
+    throw error;
+  });
 };
 
 program
@@ -93,9 +123,7 @@ program
   .command('init [name]')
   .description('Initialize uewp project.')
   .option('--open [open]', 'open project.')
-  .action(name => {
-    console.log(name);
-  });
+  .action(initConsole);
 
 program
   .command('dev')

@@ -1,5 +1,3 @@
-import { build } from "../lib/core.js";
+import { build } from '../lib/core.js';
 
-// build('development')
-
-console.log();
+build('development');
