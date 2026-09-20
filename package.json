@@ -19,7 +19,7 @@
     }
   },
   "scripts": {
-    "start": "nub main.js"
+    "help": "nub main.js --help"
   },
   "dependencies": {
     "chalk": "^6.0.0",
