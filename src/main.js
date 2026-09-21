@@ -1,1 +1,1 @@
-document.body.innerHTML = '<h1>🚀Hello, Uewp!!!</h1>'
+alert('🚀Hello, Uewp!!!');
