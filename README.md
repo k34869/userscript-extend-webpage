@@ -3,10 +3,7 @@
 ## install
 
 ```shell
-npm install userscript-extend-webpage
-# pnpm add userscript-extend-webpage
-# nub install userscript-extend-webpage
-# ...
+nub install userscript-extend-webpage
 ```
 
 ## usage
