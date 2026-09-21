@@ -3,7 +3,7 @@
 ## install
 
 ```shell
-nub install userscript-extend-webpage
+nub install userscript-extend-webpage -g
 ```
 
 ## usage

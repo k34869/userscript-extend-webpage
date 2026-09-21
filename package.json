@@ -1,7 +1,7 @@
 {
   "name": "userscript-extend-webpage",
   "binName": "uewp",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Web extension development tool based on UserScript.",
   "type": "module",
   "main": "main.js",
@@ -29,6 +29,8 @@
     "ignore": "^7.0.9",
     "ora": "^9.4.1",
     "rollup": "^4.42.0",
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-image": "^3.0.3",
     "autoprefixer": "^10.6.1",
     "postcss": "^8.5.28",
