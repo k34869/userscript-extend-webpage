@@ -17,8 +17,5 @@
     "build": "uewp",
     "dev": "uewp dev -w",
     "docs": "uewp docs"
-  },
-  "dependencies": {
-    "userscript-extend-webpage": "^1.0.0"
   }
 }
