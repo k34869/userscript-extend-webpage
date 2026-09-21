@@ -28,9 +28,7 @@
     "fs-extra": "^11.2.0",
     "ignore": "^7.0.9",
     "ora": "^9.4.1",
-    "rollup": "^4.42.0"
-  },
-  "devDependencies": {
+    "rollup": "^4.42.0",
     "@rollup/plugin-image": "^3.0.3",
     "autoprefixer": "^10.6.1",
     "postcss": "^8.5.28",
