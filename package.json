@@ -1,7 +1,7 @@
 {
   "name": "userscript-extend-webpage",
   "binName": "uewp",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Web extension development tool based on UserScript.",
   "type": "module",
   "main": "main.js",
