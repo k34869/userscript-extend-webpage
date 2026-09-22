@@ -119,12 +119,16 @@ program
   .name(packages.binName)
   .version(packages.version)
   .description(packages.description)
-  .action(buildConsole);
+  .action(() => {
+    buildConsole();
+  });
 
 program
   .command('init [name]')
   .description('Initialize uewp project.')
-  .action(initConsole);
+  .action(() => {
+    initConsole();
+  });
 
 program
   .command('dev')
@@ -160,11 +164,15 @@ program
 program
   .command('build')
   .description('Build for production mode.')
-  .action(buildConsole);
+  .action(() => {
+    buildConsole();
+  });
 
 program
   .command('docs')
   .description('Open tampermonkey documentation in default browser.')
-  .action(openDocs);
+  .action(() => {
+    openDocs();
+  });
 
 program.parse();
