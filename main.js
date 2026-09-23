@@ -126,8 +126,8 @@ program
 program
   .command('init [name]')
   .description('Initialize uewp project.')
-  .action(() => {
-    initConsole();
+  .action(name => {
+    initConsole(name);
   });
 
 program
@@ -135,8 +135,8 @@ program
   .description('Build for development mode.')
   .option('-w, --watch', 'Rebuilds when modules have changed on disk.')
   .action(opts => {
-    buildConsole('development').then(fristName => {
-      prevName = fristName;
+    buildConsole('development').then(firstName => {
+      prevName = firstName;
       if (opts.watch) {
         const ig = ignore();
         const gitignoreContent = fs.readFileSync(
